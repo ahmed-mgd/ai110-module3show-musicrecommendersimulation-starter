@@ -2,66 +2,39 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+VibeFinder 1.0
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
+This system suggests songs from a small catalog based on a user's preferred genre, mood, and energy level. It is built for classroom exploration only. It is not meant for real users or production use. It assumes the user has a single fixed preference and does not account for how taste changes depending on context or time of day.
 
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+Not to be used for: real music platforms, personalization at scale, or any use case where recommendation quality actually matters to the end user.
 
 ---
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+Each song in the catalog gets a score based on how closely it matches what the user said they like. Genre match gives the most points. Mood match gives a smaller boost. Energy uses a proximity calculation so a song closer to the user's target energy scores higher than one that is far away. There is also a small bonus for acoustic songs if the user said they prefer acoustic. Once every song has a score the system sorts them and returns the top five.
 
 ---
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The catalog has 18 songs. I started with 10 from the starter file and added 8 more to cover genres that were missing. The catalog now includes pop, lofi, rock, hip-hop, r&b, classical, folk, country, metal, edm, soul, jazz, synthwave, indie pop, and ambient. Most genres have only one song. Lofi has three. The data reflects mostly Western popular and electronic music and does not cover non-western genres at all.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system works best when the user's preferred genre has more than one song in the catalog. The chill lofi profile consistently returns good results because there are three lofi songs with different energy levels to choose from. The reasons output is also easy to understand. You can look at any result and immediately see exactly why it ranked where it did.
 
 ---
 
 ## 6. Limitations and Bias 
 
-The genre weight is too strong. I tested a profile where someone wanted metal but with peaceful, low energy music. The system returned Iron Curtain as the top result even though its energy is 0.97. Autumn Prelude was a much better fit but ranked second just because the genre label did not match. The catalog is also pretty unbalanced. Lofi has three songs while most other genres have only one, so lofi users always get solid results and genres like folk or classical barely show up for anyone. There is also no way to get a surprising recommendation. The system just keeps returning the closest match with no variety built in.  
+The genre weight is too strong. I tested a profile where someone wanted metal but with peaceful, low energy music. The system returned Iron Curtain as the top result even though its energy is 0.97. Autumn Prelude was a much better fit but ranked second just because the genre label did not match. The catalog is also pretty unbalanced. Lofi has three songs while most other genres have only one, so lofi users always get solid results and genres like folk or classical barely show up for anyone. There is also no way to get a surprising recommendation. The system just keeps returning the closest match with no variety built in.
 
 ---
 
@@ -75,17 +48,10 @@ The Chill Lofi profile worked well. The top 3 were all actual lofi tracks and th
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+First I would add more songs per genre so the catalog is more balanced. Right now most genres only have one entry which means users outside of lofi or pop do not get meaningful variety in their results. Second I would add some kind of diversity rule so the top 5 cannot all be from the same genre. Third I would separate long-term taste from session mood so a user could say they like metal overall but want something calm right now, which is a totally normal thing to want.
 
 ---
 
 ## 9. Personal Reflection  
 
-The thing that surprised me most was the adversarial profile. I went in thinking genre was the obvious thing to weight highest and for most normal profiles it works fine. But when the genre and everything else point in opposite directions the system just breaks. It recommended a near-max-energy metal track to someone who said they wanted something peaceful and quiet. A person can like metal but want something calm right now and the system has no way to handle that. Spotify probably deals with this by having some kind of session or mood layer separate from your long-term taste. This simulation does not have that at all. The chill lofi profile felt the most accurate out of everything I tested, mostly because the catalog happens to have three lofi songs and they are all pretty different from each other in energy.
+The thing that surprised me most was the adversarial profile. I went in thinking genre was the obvious thing to weight highest and for most normal profiles it works fine. But when the genre and everything else point in opposite directions the system just breaks. It recommended a near max energy metal track to someone who said they wanted something peaceful and quiet. A person can like metal but want something calm right now and the system has no way to handle that. Spotify probably deals with this by having some kind of session or mood layer separate from your long-term taste. This simulation does not have that at all. The chill lofi profile felt the most accurate out of everything I tested, mostly because the catalog happens to have three lofi songs and they are all quite different from each other in energy.
