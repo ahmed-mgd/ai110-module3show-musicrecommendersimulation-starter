@@ -61,29 +61,15 @@ Prompts:
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The genre weight is too strong. I tested a profile where someone wanted metal but with peaceful, low energy music. The system returned Iron Curtain as the top result even though its energy is 0.97. Autumn Prelude was a much better fit but ranked second just because the genre label did not match. The catalog is also pretty unbalanced. Lofi has three songs while most other genres have only one, so lofi users always get solid results and genres like folk or classical barely show up for anyone. There is also no way to get a surprising recommendation. The system just keeps returning the closest match with no variety built in.  
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
+I tested four profiles: High-Energy Pop, Chill Lofi with an acoustic preference, Deep Intense Rock, and an adversarial case that mixed metal with peaceful low-energy preferences. For each one I checked whether the top 5 results felt right and whether the reasons made sense.
 
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+The Chill Lofi profile worked well. The top 3 were all actual lofi tracks and the acoustic bonus pushed Midnight Coding and Library Rain ahead of Focus Flow, which lined up well with expectations. The rock profile showed a problem right away. There is only one rock song in the catalog so Storm Runner wins by a huge margin and the rest of the slots just fill up with high-energy songs from other genres. The adversarial profile was the most interesting. Iron Curtain ranked first even though its energy was completely wrong, which showed how much the genre weight can dominate everything else. When I ran the weight shift experiment and cut genre in half, Autumn Prelude moved to the top and Iron Curtain dropped out entirely.
 
 ---
 
@@ -102,10 +88,4 @@ Prompts:
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+The thing that surprised me most was the adversarial profile. I went in thinking genre was the obvious thing to weight highest and for most normal profiles it works fine. But when the genre and everything else point in opposite directions the system just breaks. It recommended a near-max-energy metal track to someone who said they wanted something peaceful and quiet. A person can like metal but want something calm right now and the system has no way to handle that. Spotify probably deals with this by having some kind of session or mood layer separate from your long-term taste. This simulation does not have that at all. The chill lofi profile felt the most accurate out of everything I tested, mostly because the catalog happens to have three lofi songs and they are all pretty different from each other in energy.

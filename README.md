@@ -99,11 +99,31 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+### Profile Results
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+![High-Energy Pop](screenshots/profile_pop.png)
+
+![Chill Lofi](screenshots/profile_lofi.png)
+
+![Deep Intense Rock](screenshots/profile_rock.png)
+
+![Adversarial profile](screenshots/profile_adversarial.png)
+
+### Weight Shift Experiment
+
+I halved the genre weight from +2.0 to +1.0 and doubled the energy multiplier from 1.0x to 2.0x, then re-ran the adversarial profile.
+
+```
+#   Title                     Score   Reasons
+----------------------------------------------------------------------
+1   Autumn Prelude            2.94    mood match (+1.0), energy proximity (+1.94)
+2   Spacewalk Thoughts        1.74    energy proximity (+1.74)
+3   River Road                1.68    energy proximity (+1.68)
+4   Library Rain              1.60    energy proximity (+1.60)
+5   Coffee Shop Stories       1.56    energy proximity (+1.56)
+```
+
+Iron Curtain dropped out of the top 5 entirely. With the original weights, the +2.0 genre bonus was enough to push a 0.97-energy metal song to #1 for a user who wanted peaceful, low-energy music. Once energy mattered more, Autumn Prelude (classical, peaceful, 0.18 energy) correctly took the top spot. The change made the adversarial profile more accurate but the tradeoff is that genre preference becomes weaker overall. Areasonable lofi listener would still get good results, but the genre matters less for everyone.
 
 ---
 
