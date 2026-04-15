@@ -17,17 +17,48 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+Real-world recommendation systems use collaborative filtering, content-based filtering, or a combination to suggest new content to users. Collaborative filtering uses data regarding the behavior of other similar users to recommend content to a given user. On the other hand, content-based filtering analyzes attributes from the songs the user has listened to and recommends new content with similar features.
 
-Some prompts to answer:
+My `Song` will store genre, mood, energy, tempo_bpm, valence, danceability, and acousticness. `UserProfile` will store favorite genre, favorite mood, target energy, and whether the user likes acoustic.
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+Here is the scoring rule for my recommender:
+- Genre match
+- Mood match
+- Energy proximity: scored as `1 - |target_energy - song.energy|
+- Acoustic bonus: small boost if `likes_acoustic` and song has high acousticness
 
-You can include a simple diagram or bullet list if helpful.
+Each song is scored individually, then the full catalog is sorted by score and the top-k are returned.
+
+**Scoring rule (per song):**
+
+| Signal | Points |
+|---|---|
+| Genre matches `favorite_genre` | +2.0 |
+| Mood matches `favorite_mood` | +1.0 |
+| Energy proximity | `1.0 - abs(target_energy - song.energy)` |
+| Acoustic bonus (`likes_acoustic=True` and `acousticness > 0.6`) | +0.5 |
+
+Genre is weighted highest because it is the strongest predictor of whether a listener will enjoy a track. Mood comes second. Energy proximity rewards closeness rather than just high or low values; a user targeting 0.4 energy should prefer a song at 0.45 over one at 0.9. The acoustic bonus is small since it is a secondary preference.
+
+**Ranking rule:** Sort all scored songs descending by total score, return the top k.
+
+**Data Flow**
+
+```mermaid
+flowchart TD
+    A["UserProfile\nfavorite_genre, favorite_mood,\ntarget_energy, likes_acoustic"] --> B["Load songs from songs.csv"]
+    B --> C{"For each Song in catalog"}
+    C --> D["+2.0 if genre matches"]
+    C --> E["+1.0 if mood matches"]
+    C --> F["energy proximity score"]
+    C --> G["+0.5 acoustic bonus"]
+    D & E & F & G --> H["Total Score"]
+    H --> I["Sort all songs by score ↓"]
+    I --> J["Return top-k recommendations"]
+```
+
+**Potential Biases:**
+This system will likely over-prioritize genre. A mediocre song in the right genre can outscore a song that matches the user's mood and energy perfectly but has a different genre label. It also has no diversity mechanism, so a chill lofi listener will get chill lofi every time with no way to discover anything new.
 
 ---
 
